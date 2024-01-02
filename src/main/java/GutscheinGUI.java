@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GutscheinGUI extends JFrame {
-    private final Map<String, GutscheinInfo> gutscheinInfos = new HashMap<>();
+    private final Map<String, Gutschein> gutscheinInfos = new HashMap<>();
     private final DefaultListModel<String> listModel = new DefaultListModel<>();
     private final JLabel gesamtPreisLabel = new JLabel("Gesamtpreis der Bestellung: 0 €");
     private final JList<String> gutscheinList = new JList<>(listModel);
@@ -144,7 +144,7 @@ public class GutscheinGUI extends JFrame {
         });
         panel.add(addButton);
 
-        gutscheinInfos.put(gutscheinName, new GutscheinInfo(preisProStueck, mengeComboBox, gesamtpreisLabel));
+        gutscheinInfos.put(gutscheinName, new Gutschein(preisProStueck, mengeComboBox, gesamtpreisLabel));
 
         return panel;
     }
