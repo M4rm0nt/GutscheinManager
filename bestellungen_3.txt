@@ -1,9 +1,0 @@
-Datum: 02.01.2024
-Besteller: Herr Bob aus Markt 41
-
-Positionen:
-----------------------------------------
-Gutschein Werkzeug, 100 Stk, 700,00 €
-----------------------------------------
-
-Gesamtpreis der Bestellung: 700,00 € €

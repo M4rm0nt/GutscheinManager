@@ -1,8 +1,0 @@
-Datum: 02.01.2024
-Besteller: Herr Bob aus Markt 41
-
-Positionen:
-----------------------------------------
-----------------------------------------
-
-Gesamtpreis der Bestellung: 0,00 € €
