@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,16 +57,17 @@ public class GutscheinGUI extends JFrame {
         add(ausgewaehltePanel);
 
         gutscheinList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
         JButton deleteButton = new JButton("Ausgewählte Gutscheine löschen");
         deleteButton.addActionListener(e -> {
             int[] selectedIndices = gutscheinList.getSelectedIndices();
             if (selectedIndices.length > 0) {
-                for (int i = selectedIndices.length - 1; i >= 0; i--) {
+                List<String> removedEntries = new ArrayList<>();
+                for(int i = selectedIndices.length - 1; i >= 0; i--) {
+                    removedEntries.add(listModel.get(selectedIndices[i]));
                     listModel.remove(selectedIndices[i]);
                 }
-                for (Gutschein gutschein : gutscheinInfos.values()) {
-                    gutschein.mengeComboBox.setSelectedItem(0);
-                }
+                resetCheckboxForRemovedGutscheine(removedEntries);
                 updateGesamtPreis();
             }
         });
@@ -135,7 +138,7 @@ public class GutscheinGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int hinzugefuegteMenge = (int) mengeComboBox.getSelectedItem();
-                if (hinzugefuegteMenge > 0) { // Hinzugefügte Überprüfung
+                if (hinzugefuegteMenge > 0) {
                     double gesamtpreisHinzugefuegt = preisProStueck * hinzugefuegteMenge;
 
                     boolean gutscheinGefunden = false;
@@ -234,6 +237,19 @@ public class GutscheinGUI extends JFrame {
         }
         gesamtPreisLabel.setText("Gesamtpreis der Bestellung: " + String.format("%.2f €", gesamtPreis));
     }
+
+    private void resetCheckboxForRemovedGutscheine(List<String> removedEntries) {
+        for (String removedEntry : removedEntries) {
+            for (Map.Entry<String, Gutschein> entry : gutscheinInfos.entrySet()) {
+                Gutschein gutschein = entry.getValue();
+                if (removedEntry.startsWith(entry.getKey())) {
+                    gutschein.mengeComboBox.setSelectedItem(0);
+                    break;
+                }
+            }
+        }
+    }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(GutscheinGUI::new);
