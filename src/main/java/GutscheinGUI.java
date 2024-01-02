@@ -2,6 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,9 +45,11 @@ public class GutscheinGUI extends JFrame {
         add(geschenkPanel);
         add(farbePanel);
 
+        JPanel ausgewaehltePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel ausgewaehlteLabel = new JLabel("Ausgewählte Gutscheine:");
         ausgewaehlteLabel.setFont(labelFont);
-        add(ausgewaehlteLabel);
+        ausgewaehltePanel.add(ausgewaehlteLabel);
+        add(ausgewaehltePanel);
 
         gutscheinList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JButton deleteButton = new JButton("Ausgewählte Gutscheine löschen");
@@ -60,14 +65,24 @@ public class GutscheinGUI extends JFrame {
 
         JPanel listPanel = new JPanel(new BorderLayout());
         listPanel.add(new JScrollPane(gutscheinList), BorderLayout.CENTER);
-        listPanel.add(deleteButton, BorderLayout.SOUTH);
         listPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+
+        JButton bestellenButton = new JButton("Bestellen");
+        bestellenButton.addActionListener(e -> bestellen());
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.add(bestellenButton);
+        buttonPanel.add(deleteButton);
+
+        listPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         add(listPanel);
 
+        JPanel gesamtPreisPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         gesamtPreisLabel.setFont(labelFont);
         gesamtPreisLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-        add(gesamtPreisLabel);
+        gesamtPreisPanel.add(gesamtPreisLabel);
+        add(gesamtPreisPanel);
 
         setVisible(true);
     }
@@ -97,7 +112,7 @@ public class GutscheinGUI extends JFrame {
         panel.add(mengeComboBox);
 
         JLabel spacer3 = new JLabel(" ");
-        spacer3.setPreferredSize(new Dimension(20, 0));
+        spacer3.setPreferredSize(new Dimension(40, 0));
         panel.add(spacer3);
 
         JLabel gesamtpreisLabel = new JLabel("Gesamtpreis: 0.00€");
@@ -158,6 +173,18 @@ public class GutscheinGUI extends JFrame {
         return panel;
     }
 
+    private void bestellen() {
+        try (FileWriter writer = new FileWriter("bestellungen.txt", true);
+             BufferedWriter bw = new BufferedWriter(writer)) {
+            for (int i = 0; i < listModel.getSize(); i++) {
+                bw.write(listModel.get(i) + "\n");
+            }
+            bw.flush();
+            JOptionPane.showMessageDialog(this, "Bestellung wurde gespeichert.", "Bestellung", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Fehler beim Speichern der Bestellung.", "Fehler", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     private void updateGesamtPreis() {
         double gesamtPreis = 0;
