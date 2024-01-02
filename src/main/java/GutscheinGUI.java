@@ -100,7 +100,7 @@ public class GutscheinGUI extends JFrame {
         spacer3.setPreferredSize(new Dimension(20, 0));
         panel.add(spacer3);
 
-        JLabel gesamtpreisLabel = new JLabel("Gesamtpreis: 0€");
+        JLabel gesamtpreisLabel = new JLabel("Gesamtpreis: 0.00€");
         gesamtpreisLabel.setPreferredSize(new Dimension(150, gesamtpreisLabel.getPreferredSize().height));
         panel.add(gesamtpreisLabel);
 
