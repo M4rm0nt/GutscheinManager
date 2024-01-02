@@ -1,3 +1,3 @@
 public enum Anrede {
-    Herr, Frau
+    Herr, Frau, Diverse
 }
