@@ -1,0 +1,10 @@
+Datum: 02.01.2024
+Besteller: Herr Bob aus Markt 41
+
+Positionen:
+----------------------------------------
+Gutschein Geschenk, 100 Stk, 800,00 €
+Gutschein Farbe, 100 Stk, 900,00 €
+----------------------------------------
+
+Gesamtpreis der Bestellung: 1700,00 € €

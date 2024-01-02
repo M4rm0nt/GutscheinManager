@@ -6,13 +6,15 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class GutscheinGUI extends JFrame {
     private final Map<String, Gutschein> gutscheinInfos = new HashMap<>();
     private final DefaultListModel<String> listModel = new DefaultListModel<>();
-    private final JLabel gesamtPreisLabel = new JLabel("Gesamtpreis der Bestellung: 0 €");
+    private final JLabel gesamtPreisLabel = new JLabel("Gesamtpreis der Bestellung: 0.00 €");
     private final JList<String> gutscheinList = new JList<>(listModel);
 
     public GutscheinGUI() {
@@ -60,6 +62,9 @@ public class GutscheinGUI extends JFrame {
                 for (int i = selectedIndices.length - 1; i >= 0; i--) {
                     listModel.remove(selectedIndices[i]);
                 }
+                for (Gutschein gutschein : gutscheinInfos.values()) {
+                    gutschein.mengeComboBox.setSelectedItem(0);
+                }
                 updateGesamtPreis();
             }
         });
@@ -100,7 +105,7 @@ public class GutscheinGUI extends JFrame {
         spacer1.setPreferredSize(new Dimension(20, 0));
         panel.add(spacer1);
 
-        JLabel preisLabel = new JLabel("VPE: " + String.format("%.2f€", preisProStueck));
+        JLabel preisLabel = new JLabel("VPE: " + String.format("%.2f €", preisProStueck));
         preisLabel.setPreferredSize(new Dimension(100, preisLabel.getPreferredSize().height));
         panel.add(preisLabel);
 
@@ -116,7 +121,7 @@ public class GutscheinGUI extends JFrame {
         spacer3.setPreferredSize(new Dimension(40, 0));
         panel.add(spacer3);
 
-        JLabel gesamtpreisLabel = new JLabel("Gesamtpreis: 0.00€");
+        JLabel gesamtpreisLabel = new JLabel("Gesamtpreis: 0.00 €");
         gesamtpreisLabel.setPreferredSize(new Dimension(150, gesamtpreisLabel.getPreferredSize().height));
         panel.add(gesamtpreisLabel);
 
@@ -130,34 +135,37 @@ public class GutscheinGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int hinzugefuegteMenge = (int) mengeComboBox.getSelectedItem();
-                double gesamtpreisHinzugefuegt = preisProStueck * hinzugefuegteMenge;
+                if (hinzugefuegteMenge > 0) { // Hinzugefügte Überprüfung
+                    double gesamtpreisHinzugefuegt = preisProStueck * hinzugefuegteMenge;
 
-                boolean gutscheinGefunden = false;
-                for (int i = 0; i < listModel.getSize(); i++) {
-                    String eintrag = listModel.get(i);
-                    if (eintrag.startsWith(gutscheinName)) {
-                        String[] teile = eintrag.split(", ");
-                        int vorhandeneMenge = Integer.parseInt(teile[1].split(" ")[0]);
-                        double vorhandenerGesamtpreis = Double.parseDouble(teile[2].replace("€", "").trim().replace(",", "."));
+                    boolean gutscheinGefunden = false;
+                    for (int i = 0; i < listModel.getSize(); i++) {
+                        String eintrag = listModel.get(i);
+                        if (eintrag.startsWith(gutscheinName)) {
+                            String[] teile = eintrag.split(", ");
+                            int vorhandeneMenge = Integer.parseInt(teile[1].split(" ")[0]);
+                            double vorhandenerGesamtpreis = Double.parseDouble(teile[2].replace("€", "").trim().replace(",", "."));
 
-                        int neueMenge = vorhandeneMenge + hinzugefuegteMenge;
-                        double neuerGesamtpreis = vorhandenerGesamtpreis + gesamtpreisHinzugefuegt;
+                            int neueMenge = vorhandeneMenge + hinzugefuegteMenge;
+                            double neuerGesamtpreis = vorhandenerGesamtpreis + gesamtpreisHinzugefuegt;
 
-                        String neuerEintrag = gutscheinName + ", " + neueMenge + " Stk, " + String.format("%.2f€", neuerGesamtpreis);
-                        listModel.set(i, neuerEintrag);
+                            String neuerEintrag = gutscheinName + ", " + neueMenge + " Stk, " + String.format("%.2f €", neuerGesamtpreis);
+                            listModel.set(i, neuerEintrag);
 
-                        gutscheinGefunden = true;
-                        break;
+                            gutscheinGefunden = true;
+                            break;
+                        }
                     }
-                }
 
-                if (!gutscheinGefunden) {
-                    listModel.addElement(gutscheinName + ", " + hinzugefuegteMenge + " Stk, " + String.format("%.2f€", gesamtpreisHinzugefuegt));
-                }
+                    if (!gutscheinGefunden) {
+                        listModel.addElement(gutscheinName + ", " + hinzugefuegteMenge + " Stk, " + String.format("%.2f €", gesamtpreisHinzugefuegt));
+                    }
 
-                updateGesamtPreis();
+                    updateGesamtPreis();
+                }
             }
         });
+
         panel.add(addButton);
 
         mengeComboBox.addActionListener(new ActionListener() {
@@ -165,7 +173,7 @@ public class GutscheinGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int menge = (int) mengeComboBox.getSelectedItem();
                 double gesamtpreis = preisProStueck * menge;
-                gesamtpreisLabel.setText("Gesamtpreis: " + String.format("%.2f€", gesamtpreis));
+                gesamtpreisLabel.setText("Gesamtpreis: " + String.format("%.2f €", gesamtpreis));
             }
         });
 
@@ -175,6 +183,11 @@ public class GutscheinGUI extends JFrame {
     }
 
     private void bestellen() {
+
+        Benutzer benutzer = new Benutzer(Anrede.Herr, "Bob", 41);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+        String dateString = formatter.format(new Date());
+
         int index = 0;
         String basisDateiname = "bestellungen";
         String dateiEndung = ".txt";
@@ -187,9 +200,22 @@ public class GutscheinGUI extends JFrame {
 
         try (FileWriter writer = new FileWriter(datei, true);
              BufferedWriter bw = new BufferedWriter(writer)) {
+
+            bw.write("Datum: " + dateString + "\n");
+            bw.write("Besteller: " + Anrede.Herr + " " + benutzer.getName() + " aus Markt " + benutzer.getMarktnummer() + "\n");
+
+            bw.write("\n");
+
+            bw.write("Positionen:\n");
+            bw.write("----------------------------------------\n");
+
             for (int i = 0; i < listModel.getSize(); i++) {
                 bw.write(listModel.get(i) + "\n");
             }
+
+            bw.write("----------------------------------------\n");
+
+            bw.write("\n" + gesamtPreisLabel.getText() + " €" + "\n");
             bw.flush();
             JOptionPane.showMessageDialog(this, "Bestellung wurde in " + datei.getName() + " gespeichert.", "Bestellung", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException ex) {
