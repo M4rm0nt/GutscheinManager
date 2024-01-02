@@ -193,12 +193,10 @@ public class GutscheinGUI extends JFrame {
         dialog.setLayout(new FlowLayout());
         dialog.setSize(300, 200);
 
-        // Komponenten für den Dialog
         JTextField nameField = new JTextField(20);
         JTextField preisField = new JTextField(20);
         JButton addButton = new JButton("Hinzufügen");
 
-        // Aktion für den Hinzufügen-Knopf
         addButton.addActionListener(e -> {
             try {
                 String gutscheinName = nameField.getText().trim();
@@ -220,7 +218,6 @@ public class GutscheinGUI extends JFrame {
             }
         });
 
-
         dialog.add(new JLabel("Gutschein Name:"));
         dialog.add(nameField);
         dialog.add(new JLabel("Preis pro Stück:"));
@@ -231,7 +228,8 @@ public class GutscheinGUI extends JFrame {
 
     private void bestellen() {
 
-        Benutzer benutzer = new Benutzer(Anrede.Herr, "Bob", 22, 41);
+        Markt markt = new Markt(41, "test.firma@firma.com", new Benutzer(Anrede.Herr, "Bob", 22, 41));
+        Benutzer benutzer = new Benutzer(Anrede.Herr, "Alice", 54, 33);
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
         String dateString = formatter.format(new Date());
 
@@ -252,7 +250,7 @@ public class GutscheinGUI extends JFrame {
 
             bw.write("\n");
 
-            bw.write("Besteller: " + Anrede.Herr + " " + benutzer.getName() + "(" + benutzer.getMitarbeiternummer() + ")" + " aus Markt " + benutzer.getMarktnummer() + "\n");
+            bw.write("Besteller: " + Anrede.Frau + " " + benutzer.getName() + "(" + benutzer.getMitarbeiternummer() + ")" + " aus Markt " + benutzer.getMarktnummer() + "\n");
 
             bw.write("\n");
 
@@ -265,6 +263,14 @@ public class GutscheinGUI extends JFrame {
             bw.write("\n");
 
             bw.write(gesamtPreisLabel.getText() + " €" + "\n");
+
+            bw.write("\n");
+
+            bw.write("Bestellinformation wurde an " + markt.getEmail() + " weitergeleitet.");
+
+            bw.write("\n");
+
+            bw.write("Ansprechpartner: " + markt.getAnspartner().getAnrede() + " " + markt.getAnspartner().getName() + "(" + markt.getAnspartner().getMitarbeiternummer() + ")");
 
             bw.flush();
 
@@ -298,8 +304,6 @@ public class GutscheinGUI extends JFrame {
             }
         }
     }
-
-
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(GutscheinGUI::new);
