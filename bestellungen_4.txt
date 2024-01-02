@@ -1,0 +1,9 @@
+Gutscheinbestellung		Datum: 02.01.2024
+
+Besteller: Herr Bob aus Markt 41
+
+Positionen:
+	-Gutschein Garten, 50 Stk, 250,00 €
+	-Gutschein Werkzeug, 100 Stk, 700,00 €
+
+Gesamtpreis der Bestellung: 950,00 € €

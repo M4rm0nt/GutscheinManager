@@ -21,7 +21,7 @@ public class GutscheinGUI extends JFrame {
 
     public GutscheinGUI() {
         setTitle("Gutschein Manager");
-        setSize(800, 500);
+        setSize(800, 900);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
@@ -36,7 +36,6 @@ public class GutscheinGUI extends JFrame {
         JPanel werkzeugPanel = createGutscheinPanel("Gutschein Werkzeug", 7.0);
         JPanel geschenkPanel = createGutscheinPanel("Gutschein Geschenk", 8.0);
         JPanel farbePanel = createGutscheinPanel("Gutschein Farbe", 9.0);
-
 
         gartenPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         weihnachtenPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
@@ -82,6 +81,10 @@ public class GutscheinGUI extends JFrame {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         buttonPanel.add(bestellenButton);
         buttonPanel.add(deleteButton);
+
+        JButton newGutscheinButton = new JButton("Neuen Gutschein erstellen");
+        newGutscheinButton.addActionListener(e -> createNewGutscheinModal());
+        buttonPanel.add(newGutscheinButton);
 
         listPanel.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -185,9 +188,50 @@ public class GutscheinGUI extends JFrame {
         return panel;
     }
 
+    private void createNewGutscheinModal() {
+        JDialog dialog = new JDialog(this, "Neuen Gutschein erstellen", true);
+        dialog.setLayout(new FlowLayout());
+        dialog.setSize(300, 200);
+
+        // Komponenten für den Dialog
+        JTextField nameField = new JTextField(20);
+        JTextField preisField = new JTextField(20);
+        JButton addButton = new JButton("Hinzufügen");
+
+        // Aktion für den Hinzufügen-Knopf
+        addButton.addActionListener(e -> {
+            try {
+                String gutscheinName = nameField.getText().trim();
+                double preisProStueck = Double.parseDouble(preisField.getText().trim());
+
+                if (gutscheinInfos.containsKey(gutscheinName)) {
+                    JOptionPane.showMessageDialog(dialog, "Ein Gutschein mit diesem Namen existiert bereits.", "Fehler", JOptionPane.ERROR_MESSAGE);
+                } else if (!gutscheinName.isEmpty() && preisProStueck > 0) {
+                    JPanel neuesGutscheinPanel = createGutscheinPanel(gutscheinName, preisProStueck);
+                    add(neuesGutscheinPanel);
+                    neuesGutscheinPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+                    revalidate();
+                    dialog.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(dialog, "Bitte gültigen Namen und Preis eingeben.", "Eingabefehler", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(dialog, "Bitte einen gültigen Preis eingeben.", "Eingabefehler", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+
+        dialog.add(new JLabel("Gutschein Name:"));
+        dialog.add(nameField);
+        dialog.add(new JLabel("Preis pro Stück:"));
+        dialog.add(preisField);
+        dialog.add(addButton);
+        dialog.setVisible(true);
+    }
+
     private void bestellen() {
 
-        Benutzer benutzer = new Benutzer(Anrede.Herr, "Bob", 41);
+        Benutzer benutzer = new Benutzer(Anrede.Herr, "Bob", 22, 41);
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
         String dateString = formatter.format(new Date());
 
@@ -204,23 +248,28 @@ public class GutscheinGUI extends JFrame {
         try (FileWriter writer = new FileWriter(datei, true);
              BufferedWriter bw = new BufferedWriter(writer)) {
 
-            bw.write("Datum: " + dateString + "\n");
-            bw.write("Besteller: " + Anrede.Herr + " " + benutzer.getName() + " aus Markt " + benutzer.getMarktnummer() + "\n");
+            bw.write("Gutscheinbestellung" + "\t\tDatum: " + dateString + "\n");
+
+            bw.write("\n");
+
+            bw.write("Besteller: " + Anrede.Herr + " " + benutzer.getName() + "(" + benutzer.getMitarbeiternummer() + ")" + " aus Markt " + benutzer.getMarktnummer() + "\n");
 
             bw.write("\n");
 
             bw.write("Positionen:\n");
-            bw.write("----------------------------------------\n");
 
             for (int i = 0; i < listModel.getSize(); i++) {
-                bw.write(listModel.get(i) + "\n");
+                bw.write("\t" + "-\t" + listModel.get(i) + "\n");
             }
 
-            bw.write("----------------------------------------\n");
+            bw.write("\n");
 
-            bw.write("\n" + gesamtPreisLabel.getText() + " €" + "\n");
+            bw.write(gesamtPreisLabel.getText() + " €" + "\n");
+
             bw.flush();
+
             JOptionPane.showMessageDialog(this, "Bestellung wurde in " + datei.getName() + " gespeichert.", "Bestellung", JOptionPane.INFORMATION_MESSAGE);
+
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Fehler beim Speichern der Bestellung.", "Fehler", JOptionPane.ERROR_MESSAGE);
         }
@@ -249,6 +298,7 @@ public class GutscheinGUI extends JFrame {
             }
         }
     }
+
 
 
     public static void main(String[] args) {

@@ -1,0 +1,9 @@
+Datum: 02.01.2024
+Besteller: Herr Bob aus Markt 41
+
+Positionen:
+----------------------------------------
+Gutschein Garten, 100 Stk, 500,00 €
+----------------------------------------
+
+Gesamtpreis der Bestellung: 500,00 € €
