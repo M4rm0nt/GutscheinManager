@@ -144,6 +144,15 @@ public class GutscheinGUI extends JFrame {
         });
         panel.add(addButton);
 
+        mengeComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int menge = (int) mengeComboBox.getSelectedItem();
+                double gesamtpreis = preisProStueck * menge;
+                gesamtpreisLabel.setText("Gesamtpreis: " + String.format("%.2f€", gesamtpreis));
+            }
+        });
+
         gutscheinInfos.put(gutscheinName, new Gutschein(preisProStueck, mengeComboBox, gesamtpreisLabel));
 
         return panel;
