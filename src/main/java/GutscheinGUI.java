@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
@@ -174,13 +175,23 @@ public class GutscheinGUI extends JFrame {
     }
 
     private void bestellen() {
-        try (FileWriter writer = new FileWriter("bestellungen.txt", true);
+        int index = 0;
+        String basisDateiname = "bestellungen";
+        String dateiEndung = ".txt";
+        File datei = new File(basisDateiname + dateiEndung);
+
+        while (datei.exists()) {
+            index++;
+            datei = new File(basisDateiname + "_" + index + dateiEndung);
+        }
+
+        try (FileWriter writer = new FileWriter(datei, true);
              BufferedWriter bw = new BufferedWriter(writer)) {
             for (int i = 0; i < listModel.getSize(); i++) {
                 bw.write(listModel.get(i) + "\n");
             }
             bw.flush();
-            JOptionPane.showMessageDialog(this, "Bestellung wurde gespeichert.", "Bestellung", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Bestellung wurde in " + datei.getName() + " gespeichert.", "Bestellung", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Fehler beim Speichern der Bestellung.", "Fehler", JOptionPane.ERROR_MESSAGE);
         }
