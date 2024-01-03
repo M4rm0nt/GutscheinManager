@@ -1,0 +1,12 @@
+Gutscheinbestellung		Datum: 03.01.2024
+
+Besteller: Frau Alice(54) aus Markt 33
+
+Positionen:
+	-	Gutschein Garten, 100 Stk, 500,00 €
+	-	Gutschein Werkzeug, 500 Stk, 3500,00 €
+
+Gesamtpreis der Bestellung: 4000,00 € €
+
+Bestellinformation wurde an test.firma@firma.com weitergeleitet.
+Ansprechpartner: Herr Bob(22)
