@@ -2,16 +2,21 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+import javax.mail.*;
+import javax.mail.internet.*;
+import java.util.*;
+
+
 
 public class GutscheinGUI extends JFrame {
     private final Map<String, Gutschein> gutscheinInfos = new HashMap<>();
@@ -227,7 +232,6 @@ public class GutscheinGUI extends JFrame {
     }
 
     private void bestellen() {
-
         Markt markt = new Markt(41, "test.firma@firma.com", new Benutzer(Anrede.Herr, "Bob", 22, 41));
         Benutzer benutzer = new Benutzer(Anrede.Herr, "Alice", 54, 33);
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
@@ -247,13 +251,9 @@ public class GutscheinGUI extends JFrame {
              BufferedWriter bw = new BufferedWriter(writer)) {
 
             bw.write("Gutscheinbestellung" + "\t\tDatum: " + dateString + "\n");
-
             bw.write("\n");
-
             bw.write("Besteller: " + Anrede.Frau + " " + benutzer.getName() + "(" + benutzer.getMitarbeiternummer() + ")" + " aus Markt " + benutzer.getMarktnummer() + "\n");
-
             bw.write("\n");
-
             bw.write("Positionen:\n");
 
             for (int i = 0; i < listModel.getSize(); i++) {
@@ -261,23 +261,45 @@ public class GutscheinGUI extends JFrame {
             }
 
             bw.write("\n");
-
             bw.write(gesamtPreisLabel.getText() + " €" + "\n");
-
             bw.write("\n");
-
             bw.write("Bestellinformation wurde an " + markt.getEmail() + " weitergeleitet.");
-
             bw.write("\n");
-
-            bw.write("Ansprechpartner: " + markt.getAnspartner().getAnrede() + " " + markt.getAnspartner().getName() + "(" + markt.getAnspartner().getMitarbeiternummer() + ")");
+            bw.write("Ansprechpartner: " + markt.getAnspartner().getAnrede() + " " + markt.getAnspartner().getName() + "(" + markt.getAnspartner().getMitarbeiternummer() + ")" + " aus Markt " + markt.getAnspartner().getMarktnummer() + "\n");
 
             bw.flush();
+
+            String pdfDateiname = basisDateiname + "_" + index + ".pdf";
+            String bestelltext = "Gutscheinbestellung" + "\t\tDatum: " + dateString + "\n" + "\n" + "Besteller: " + Anrede.Frau + " " + benutzer.getName() + "(" + benutzer.getMitarbeiternummer() + ")" + " aus Markt " + benutzer.getMarktnummer() + "\n" + "\n" + "Positionen:\n";
+
+            for (int i = 0; i < listModel.getSize(); i++) {
+                bestelltext += "\t" + "-\t" + listModel.get(i) + "\n";
+            }
+
+            bestelltext += "\n" + gesamtPreisLabel.getText() + " €" + "\n" + "\n" + "Bestellinformation wurde an " + markt.getEmail() + " weitergeleitet." + "\n" + "Ansprechpartner: " + markt.getAnspartner().getAnrede() + " " + markt.getAnspartner().getName() + "(" + markt.getAnspartner().getMitarbeiternummer() + ")" + " aus Markt " + markt.getAnspartner().getMarktnummer() + "\n";
+
+            erstellePDF(pdfDateiname, bestelltext);
 
             JOptionPane.showMessageDialog(this, "Bestellung wurde in " + datei.getName() + " gespeichert.", "Bestellung", JOptionPane.INFORMATION_MESSAGE);
 
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Fehler beim Speichern der Bestellung.", "Fehler", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void erstellePDF(String pdfDateiname, String bestelltext) {
+        Document document = new Document();
+
+        try {
+            PdfWriter.getInstance(document, new FileOutputStream(pdfDateiname));
+            document.open();
+
+            Paragraph paragraph = new Paragraph(bestelltext);
+            document.add(paragraph);
+
+            document.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -304,5 +326,4 @@ public class GutscheinGUI extends JFrame {
             }
         }
     }
-
 }

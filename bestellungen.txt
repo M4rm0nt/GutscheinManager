@@ -1,13 +1,11 @@
-Gutscheinbestellung		Datum: 02.01.2024
+Gutscheinbestellung		Datum: 03.01.2024
 
-Besteller: Frau Alice(22) aus Markt 41
+Besteller: Frau Alice(54) aus Markt 33
 
 Positionen:
-	-	Gutschein Garten, 200 Stk, 1000,00 €
-	-	Gutschein Weihnachten, 100 Stk, 600,00 €
-	-	Gutschein Geschenk, 100 Stk, 800,00 €
+	-	Gutschein Garten, 150 Stk, 750,00 €
 
-Gesamtpreis der Bestellung: 2400,00 € €
+Gesamtpreis der Bestellung: 750,00 € €
 
 Bestellinformation wurde an test.firma@firma.com weitergeleitet.
-Ansprechpartner: Herr Bob (22)
+Ansprechpartner: Herr Bob(22) aus Markt 41
